@@ -1,0 +1,57 @@
+﻿@using MobileShop.Models;
+@using PagedList.Mvc;
+@model PagedList.PagedList<MobileShop.Models.ViewModel.ProductViewModel>
+@{
+    ViewBag.Title = "TypeItem";
+    Layout = "~/Views/Shared/_LayoutMobiePhone.cshtml";
+}
+
+<div class="features_items">
+    <!--New_Items-->
+    <!--------------------------------foreach---------------------------------------------------->
+    <h2 class="title text-center">@ViewData["TitleName"]</h2>
+    @foreach (var item in Model)
+    {
+        <div class="col-sm-4">
+            <div class="product-image-wrapper">
+                <div class="single-products">
+                    <div class="productinfo text-center">
+                        <img src="/images/products/@item.Imagecolor" alt="" />
+                        <h2>@String.Format("{0:#,##0}", item.Price) VNĐ</h2>
+                        <p>@item.Name @item.ColorName</p>
+                    </div>
+                    <div class="product-overlay">
+                        <div class="overlay-content">
+                            <h2>Cấu Hình</h2>
+                            <p>@item.Cpu</p>
+                            <h2>Kích Thước  </h2>
+                            <p>@item.Screen</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="choose">
+                    <ul class="nav nav-pills nav-justified">
+                        <li><a href="@Url.Action("Detail", "Items", new { id = item.Id})"><i class="fa fa-plus-square"></i>Xem Chi Tiết</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    }
+    <div class="clearfix"></div>
+</div><!--New_items-->
+
+<div>
+    <br />
+</div>
+<div style="display:inline;">
+    @Html.PagedListPager(Model, page => Url.Action("ItemsForBrand", new { id = ViewData["BrandId"], page = page }))
+</div>
+<style>
+    .page-menu li {
+        display: inline;
+    }
+
+    ul.pagination {
+        margin-left: 35%;
+    }
+</style>

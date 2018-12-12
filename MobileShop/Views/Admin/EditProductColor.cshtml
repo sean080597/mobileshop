@@ -1,0 +1,65 @@
+﻿@model MobileShop.Models.ProductColor
+
+@{
+    ViewBag.Title = "EditProductColor";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<h2>EditProductColor</h2>
+
+@using (Html.BeginForm(Html.BeginForm("EditProductColor", "Admin", FormMethod.Post, new { enctype = "multipart/form-data" })))
+{
+    @Html.AntiForgeryToken()
+    
+    <div class="form-horizontal">
+        <h4>ProductColor</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.ColorId)
+
+        <div class="form-group">
+            @Html.Label("Id Sản phẩm", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <input class="form-control" name="ProductID" type="text" readonly value="@ViewData["ProductID"]" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.Label("Tên màu sản phẩm", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.ColorName, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.ColorName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.Label("Giá", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Price, new { htmlAttributes = new { @class = "form-control", type = "number" } })
+                @Html.ValidationMessageFor(model => model.Price, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.Label("Ảnh", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <img src="@Url.Content("~/images/products/" + Model.ImageColor)" width="120" />(Ảnh hiện tại)
+                @Html.TextBox("ImageP", ViewData["Image"])
+                <br />
+                <input type="file" name="NewImageP" id="NewImage" value="Browse" />
+                @ViewBag.error
+                @Html.ValidationMessageFor(model => model.ImageColor, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "DetailControlP")
+</div>

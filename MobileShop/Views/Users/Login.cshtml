@@ -1,0 +1,76 @@
+﻿
+@{
+    ViewBag.Title = "SingIn";
+    Layout = "~/Views/Shared/_LayoutMobiePhone.cshtml";
+}
+
+@section OverridesStyles{
+    <style>
+        section#slider {
+            display: none;
+        }
+        #left-side{
+            display: none;
+        }
+        #container-height{
+            min-height: 400px;
+        }
+        .search_box{
+            display: none;
+        }
+    </style>
+}
+<fieldset>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-offset-4 col-sm-7">
+                @using (Html.BeginForm("Login", "Users", FormMethod.Post, new { @class = "form-horizontal ", role = "form" }))
+                {
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    
+                    <div class="form-group">
+                        <div class="col-md-offset-2">
+                            <h2 class="text-center purple-text">Đăng Nhập</h2>                           
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="account" class="control-label col-md-3 col-md-offset-1 purple-text">Tài Khoản</label>
+                        <div class="col-md-6">
+                            @Html.TextBox("account", null, new { @class = "form-control" })
+                            <font color="red">@ViewBag.Error1</font>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="pwd" class="control-label col-md-3 col-md-offset-1 purple-text">Mật Khẩu</label>
+                        <div class="col-md-6">
+                            @Html.Password("pwd", null, new { @class = "form-control" })
+                            <font color="red">@ViewBag.Error2</font>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-offset-4 col-md-7">
+                            <font color="red"><strong>@ViewBag.Alert</strong>@ViewBag.AlertInf</font>
+                            <div class="checkbox">
+                                <label>@Html.CheckBox("isRememberMe", false) Remember Me</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-4 col-md-6">
+                            <input type="submit" class="btn btn-primary btn-block" value="Đăng Nhập" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-5 col-sm-5">
+                            <a href="#" class="link_register">Quên mật khẩu?</a>
+                            <a href="@Url.Action("Register","Users")" class="link_register">Đăng ký tài khoản</a>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</fieldset>
+
+

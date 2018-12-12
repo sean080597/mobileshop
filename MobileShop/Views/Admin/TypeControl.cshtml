@@ -1,0 +1,154 @@
+﻿@model IEnumerable<MobileShop.Models.ProductType>
+
+@{
+    ViewBag.Title = "TypeControl";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<script src="/Scripts/jquery.js"></script>
+<script>
+    //update type name
+    $("body").delegate("#btn_type_update", "click", function () {
+        $("h4.modal-title").html("Xác nhận sửa");
+        $("#btn_update_type_name").css("display", "inline-block");
+        $("#btn_add_type_name").css("display", "none");
+        var type_name = $(this).attr('type_name');
+        $("#input_update_type_name").val(type_name);
+        $("#btn_update_type_name").attr('type_id', $(this).attr('type_id'));
+    })
+
+    $("body").delegate("#btn_update_type_name", "click", function () {
+        var type_id = $(this).attr('type_id');
+        var type_name = $("#input_update_type_name").val();
+
+        $.ajax({
+            url: '@Url.Action("EditType", "Admin")' + '?typeId=' + type_id + '&typeName=' + type_name,
+            method: 'POST',
+            success: function (data) {
+                alert(data);
+                location.reload();
+            }
+        });
+    });
+
+    //delete type name
+    $("body").delegate("#btn_type_delete", "click", function () {
+        $("#btn_delete_type_name").attr('type_id', $(this).attr('type_id'));
+    })
+
+    $("body").delegate("#btn_delete_type_name", "click", function () {
+        var type_id = $(this).attr('type_id');
+
+        $.ajax({
+            url: '@Url.Action("DeleteType", "Admin")' + '?typeId=' + type_id,
+            method: 'POST',
+            success: function (data) {
+                alert(data);
+                location.reload();
+            }
+        });
+    });
+
+    //add type name
+    $("body").delegate("#btn_type_add", "click", function () {
+        $("#btn_update_type_name").css("display", "none");
+        $("#btn_add_type_name").css("display", "inline-block");
+        $("h4.modal-title").html("Xác nhận thêm");
+    })
+
+    $("body").delegate("#btn_add_type_name", "click", function () {
+        var type_name = $("#input_update_type_name").val();
+        if (type_name == null || type_name == "")
+            alert("Vui lòng nhập nhãn hiệu mới");
+        else {
+            $.ajax({
+                url: '@Url.Action("CreateNewType", "Admin")' + '?typeName=' + type_name,
+                method: 'POST',
+                success: function (data) {
+                    alert(data);
+                    location.reload();
+                }
+            });
+        }
+    });
+
+</script>
+
+<h2>THÊM MỚI LOẠI SẢN PHẨM</h2>
+
+<p>
+    <button type="button" id="btn_type_add" class="btn btn-info" data-toggle="modal" data-target="#modal_edit_type">Thêm mới</button>
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.TypeName)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.TypeName)
+        </td>
+        <td>
+            <button type="button" id="btn_type_update" class="btn btn-info" data-toggle="modal" data-target="#modal_edit_type" type_id="@item.TypeId" type_name="@item.TypeName">Sửa</button>
+            <button type="button" id="btn_type_delete" class="btn btn-danger" data-toggle="modal" data-target="#modal_delete_type" type_id="@item.TypeId">Xóa</button>
+        </td>
+    </tr>
+}
+
+</table>
+
+<!-- Modal Edit type-->
+<div class="modal fade" id="modal_edit_type" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Xác nhận sửa</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <label class="control-label col-sm-4">Tên kiểu sản phẩm</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" id="input_update_type_name" placeholder="Nhập tên kiểu sản phẩm mới">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Quay lại</button>
+                <button type="button" class="btn btn-success" id="btn_update_type_name">Sửa</button>
+                <button type="button" class="btn btn-success" id="btn_add_type_name" style="display: none">Thêm</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Delete type-->
+<div class="modal fade" id="modal_delete_type" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Xác nhận xóa</h4>
+            </div>
+            <div class="modal-body">
+                <p>Bạn có chắc chắn muốn xóa kiểu sản phẩm này?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-info" data-dismiss="modal" id="btn_delete_type_name">Xóa</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Quay lại</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .table tbody tr td {
+        vertical-align: middle;
+    }
+</style>

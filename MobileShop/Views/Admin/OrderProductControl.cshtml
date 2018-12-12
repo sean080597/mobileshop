@@ -1,0 +1,680 @@
+﻿@model IEnumerable<MobileShop.Models.ViewModel.OrderProductViewModel>
+@using MobileShop.Models
+
+@{
+    ViewBag.Title = "OrderProductControl";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<script src="/Scripts/moment.js"></script>
+<script src="/Scripts/jquery.js"></script>
+<script>
+    var isValidForm, isValidDetailForm;
+    //update Order product
+    $("body").delegate("#btn_order_update", "click", function () {
+        $("h4.modal-title").html("Xác nhận sửa");//change text of title
+        $("#btn_update_order_name").css("display", "inline-block");//show button update
+        $("#btn_add_order_name").css("display", "none");//hide button add
+        $("#btn_update_order_name").attr('user_id', $(this).attr('order_userid'));//add user_id attribute to button update in modal
+        $("#btn_update_order_name").attr('order_id', $(this).attr('order_id'));//add order_id attribute to button update in modal
+
+        var parents = $(this).parent().parent();
+        var x = parents.find("#order_checkout_store").find("input").attr('checked');
+        if (x == "checked") {
+            $(".checkbox div#checkout").html('<label class="control-label col-sm-7">Đã thanh toán</label><input type="checkbox" checked="checked" class="col-sm-2" id="input_update_order_checkout">');
+        } else {
+            $(".checkbox div#checkout").html('<label class="control-label col-sm-7">Đã thanh toán</label><input type="checkbox" class="col-sm-2" id="input_update_order_checkout">');
+        }
+        $("#input_update_order_checkout").val(x);
+
+        x = parents.find("#order_day_store").text().trim();
+        var order_date = moment(x).format('YYYY-MM-DD');
+        $("#input_update_order_day").val(order_date);
+
+        x = parents.find("#order_deliveryday_store").text().trim();
+        var deli_date = moment(x).format('YYYY-MM-DD');
+        $("#input_update_order_deliveryday").val(deli_date);
+
+        x = parents.find("#order_place_store").text().trim();
+        $("#input_update_order_place").val(x);
+
+        x = parents.find("#order_username_store").text().trim();
+        $("#input_update_order_username").val(x);
+
+        var user_id = $(this).attr('order_userid');
+        $.ajax({
+            url: '@Url.Action("GetUserOrder", "Admin")' + '?userId=' + user_id,
+            method: 'POST',
+            success: function (data) {
+                $("#sel_name_user").html(data);
+            }
+        });
+    })
+
+    $("body").delegate("#btn_update_order_name", "click", function () {
+        validateForm();
+        if (isValidForm == 1) {
+            var user_id = $(this).attr('user_id');
+            var order_id = $(this).attr('order_id');
+
+            var parents = $(this).parent().parent();
+            var order_day = parents.find("#input_update_order_day").val();
+            var order_deli = parents.find("#input_update_order_deliveryday").val();
+            var order_place = parents.find("#input_update_order_place").val();
+            var order_userid = parents.find("#sel_name_user").val();
+
+            var order_checked;
+            var x = parents.find("input#input_update_order_checkout").attr('checked');
+            if (x == "checked")
+                order_checked = true;
+            else
+                order_checked = false;
+
+            $.ajax({
+                url: '@Url.Action("EditOrderProduct", "Admin")',
+                method: 'POST',
+                data: {
+                    'orderId': order_id,
+                    'orderChecked': order_checked,
+                    'orderDay': order_day,
+                    'orderDeli': order_deli,
+                    'orderPlace': order_place,
+                    'orderUserid': order_userid
+                },
+                success: function (data) {
+                    alert(data);
+                    location.reload();
+                }
+            });
+        }
+    })
+
+    //delete order product
+    $("body").delegate("#btn_order_delete", "click", function () {
+        $("#btn_delete_order_name").attr('order_id', $(this).attr('order_id'));
+    })
+
+    $("body").delegate("#btn_delete_order_name", "click", function () {
+        var order_id = $(this).attr('order_id');
+
+        $.ajax({
+            url: '@Url.Action("DeleteOrder", "Admin")' + '?orderId=' + order_id,
+            method: 'POST',
+            success: function (data) {
+                alert(data);
+                location.reload();
+            }
+        });
+    });
+
+    //add order product
+    $("body").delegate("#btn_order_add", "click", function () {
+        $("#btn_update_order_name").css("display", "none");
+        $("#btn_add_order_name").css("display", "inline-block");
+        $("h4.modal-title").html("Xác nhận thêm");
+        $("#input_update_order_checkout").removeAttr('checked');
+        $("#input_update_order_day").val(Date.now());
+        $("#input_update_order_deliveryday").val("");
+        //$("#input_update_order_place").val("");
+
+        $.ajax({
+            url: '@Url.Action("GetUserOrderWithoutUserId", "Admin")',
+            method: 'POST',
+            success: function (data) {
+                $("#sel_name_user").html(data);
+            }
+        });
+    })
+
+    //click to run button submit form
+    $("body").delegate("#btn_add_order_name", "click", function () {
+        validateForm();
+        if (isValidForm == 1) {
+            var parents = $(this).parent().parent();
+            var order_day = parents.find("#input_update_order_day").val();
+            var order_deli = parents.find("#input_update_order_deliveryday").val();
+            var order_place = parents.find("#input_update_order_place").val();
+            var order_userid = parents.find("#sel_name_user").val();
+
+            var order_checked;
+            var x = parents.find("input#input_update_order_checkout").attr('checked');
+            if (x == "checked")
+                order_checked = true;
+            else
+                order_checked = false;
+
+            $.ajax({
+                url: '@Url.Action("CreateNewOrderProduct", "Admin")',
+                method: 'POST',
+                data: {
+                    'orderChecked': order_checked,
+                    'orderDay': order_day,
+                    'orderDeli': order_deli,
+                    'orderPlace': order_place,
+                    'orderUserid': order_userid
+                },
+                success: function (data) {
+                    alert(data);
+                    location.reload();
+                }
+            });
+        }
+    });
+
+    //tracking input checked in modal
+    $("body").delegate("#input_update_order_checkout", "click", function () {
+        var isChecked = $(this).attr('checked');
+        if (isChecked == "checked") {
+            $(this).removeAttr('checked');
+        }
+        else {
+            $(this).attr('checked', 'checked');
+        }
+    })
+
+    //checking valid form
+    function validateForm() {
+        var parents = $("#btn_submit_form").parent().parent();
+        var x = parents.find("#input_update_order_day").val();
+        if (x == null || x == "") {
+            alert("Phải nhập ngày đặt");
+            return false;
+        }
+
+        x = parents.find("#input_update_order_deliveryday").val();
+        if (x == null || x == "") {
+            alert("Phải nhập ngày giao");
+            return false;
+        }
+
+        x = parents.find("#input_update_order_place").val();
+        if (x == null || x == "") {
+            alert("Phải nhập nơi nhận");
+            return false;
+        }
+        isValidForm = 1;
+    }
+
+    //checking if button detail is clicked
+    $("body").delegate("#btn_order_detail", "click", function () {
+        var order_id = $(this).attr('order_id');
+        $("#btn_add_detail_order_name").attr('order_id', order_id);//add order_id
+        $.ajax({
+            url: '@Url.Action("GetLstLineItem", "Admin")' + '?orderId=' + order_id,
+            method: 'POST',
+            success: function (data) {
+                $("#detail_order_product").nextAll().remove();
+                $("#detail_order_product").after(data);
+                GetTotalOrder(order_id);
+            }
+        });
+    })
+
+    //get total of order
+    function GetTotalOrder(order_id) {
+        $.ajax({
+            url: '@Url.Action("GetTotalOrder", "Admin")' + '?orderId=' + order_id,
+            method: 'POST',
+            success: function (data) {
+                $("#total_detail_order_p").html(data);
+            }
+        });
+    }
+
+    //Update order detail
+    $("body").delegate("#btn_edit_detail_order", "click", function () {
+        $("#btn_add_onemore_detail_order_name").css("display", "none");//hide button add
+        $("#btn_update_detail_order_name").css("display", "inline-block");//show button update
+        var order_qtt = $(this).parent().parent().find('td:nth-child(2)').text();
+        $("#input_update_order_quantity").val(order_qtt);
+        var order_id = $(this).attr('order_id');
+        var color_id = $(this).attr('color_id');
+        var prod_id = $(this).attr('p_id');
+        GetSelProductName(order_id, color_id);
+        GetSelColorName(color_id, prod_id);
+        GetPriceDetail(color_id);
+        GetTotalPriceDetail(color_id, order_qtt);
+        $("#selProductName").attr('order_id', order_id);
+        $("#selProductName").attr('color_id', color_id);
+        $("#selColorProductName").attr('order_id', order_id);
+        $("#btn_update_detail_order_name").attr('order_id', order_id);
+        $("#btn_update_detail_order_name").attr('old_prod_id', prod_id);
+        $("#btn_update_detail_order_name").attr('old_color_id', color_id);
+    })
+    //get select list product name
+    function GetSelProductName(order_id, color_id) {
+        $.ajax({
+            url: '@Url.Action("GetSelProductName", "Admin")' + '?orderId=' + order_id + '&colorId=' + color_id,
+            method: 'POST',
+            success: function (data) {
+                $("#selProductName").html(data);
+            }
+        });
+    }
+    function GetSelProductNameNoParams() {
+        $.ajax({
+            url: '@Url.Action("GetSelProductNameNoParams", "Admin")',
+            method: 'POST',
+            success: function (data) {
+                $("#selProductName").html(data);
+                GetSelColorNameNoParams($("#selProductName").val());
+            }
+        });
+    }
+    //get select list color name
+    function GetSelColorName(color_id, prod_id) {
+        $.ajax({
+            url: '@Url.Action("GetSelColorName", "Admin")' + '?colorId=' + color_id + '&prodId=' + prod_id,
+            method: 'POST',
+            success: function (data) {
+                $("#selColorProductName").html(data);
+                //set selected ColorId for selProductName to get and run some function
+                var x = $("#selColorProductName").val();
+                $("#selProductName").attr('color_id', x);
+                var order_qtt = $("#input_update_order_quantity").val();
+                color_id = $("#selProductName").attr('color_id');
+                GetPriceDetail(color_id);
+                GetTotalPriceDetail(color_id, order_qtt);
+            }
+        });
+    }
+    function GetSelColorNameNoParams(prod_id) {
+        $.ajax({
+            url: '@Url.Action("GetSelColorNameNoParams", "Admin")' + '?prodId=' + prod_id,
+            method: 'POST',
+            success: function (data) {
+                $("#selColorProductName").html(data);
+                //set selected ColorId for selProductName to get and run some function
+                var x = $("#selColorProductName").val();
+                $("#selProductName").attr('color_id', x);
+                GetPriceDetail($("#selColorProductName").val());
+                $("#input_update_order_quantity").val(1);
+                GetTotalPriceDetail($("#selColorProductName").val(), $("#input_update_order_quantity").val());
+            }
+        });
+    }
+    //get price of detail product
+    function GetPriceDetail(color_id) {
+        $.ajax({
+            url: '@Url.Action("GetPriceDetail", "Admin")' + '?colorId=' + color_id,
+            method: 'POST',
+            success: function (data) {
+                $("#input_update_order_price").html(data);
+            }
+        });
+    }
+    //get total price of detail product
+    function GetTotalPriceDetail(color_id, quantity) {
+        if (quantity == null || quantity == "")
+            quantity = 1;
+        $.ajax({
+            url: '@Url.Action("GetTotalPriceDetail", "Admin")' + '?colorId=' + color_id + '&quantity=' + quantity,
+            method: 'POST',
+            success: function (data) {
+                $("#input_update_order_totalprice").html(data);
+            }
+        });
+    }
+    //tracking onchange of selProductName
+    $("body").delegate("#selProductName", "change", function () {
+        var prod_id = $(this).val();
+        var order_id = $(this).attr('order_id');
+        var color_id = $(this).attr('color_id');//get color_id to run function GetSelColorName()
+        GetSelColorName(color_id, prod_id);
+    })
+    //tracking onchange of selProductColor
+    $("body").delegate("#selColorProductName", "change", function () {
+        var order_id = $(this).attr('order_id');
+        var color_id = $(this).val();
+        $("#selProductName").attr('color_id', color_id);
+        var order_qtt = $("#input_update_order_quantity").val();
+        GetPriceDetail(color_id);
+        GetTotalPriceDetail(color_id, order_qtt);
+    })
+    //tracking keyup on change quantity of detail order
+    $("body").delegate("#input_update_order_quantity", "keyup", function () {
+        var color_id = $("#selColorProductName").val();
+        var order_qtt = $(this).val();
+        GetPriceDetail(color_id);
+        GetTotalPriceDetail(color_id, order_qtt);
+    })
+
+    //***** Button update detail order *****
+    $("body").delegate("#btn_update_detail_order_name", "click", function () {
+        var parents = $(this).parent().parent();
+        var order_id = $(this).attr('order_id');
+        var old_prod_id = $(this).attr('old_prod_id');
+        var old_color_id = $(this).attr('old_color_id');
+        var new_prod_id = parents.find("#selProductName").val();
+        var new_color_id = parents.find("#selColorProductName").val();
+        var detail_qtt = parents.find("#input_update_order_quantity").val();
+        var detail_price = parents.find("#input_update_order_price").text().replace(/[^\d]/g, '');
+        var detail_totalprice = parents.find("#input_update_order_totalprice").text().replace(/[^\d]/g, '');
+        $.ajax({
+            url: '@Url.Action("UpdateDetailOrderProduct", "Admin")',
+            method: 'POST',
+            data: {
+                'orderId': order_id,
+                'oldProdId': old_prod_id,
+                'oldColorId': old_color_id,
+                'newProdId': new_prod_id,
+                'newColorId': new_color_id,
+                'detailQtt': detail_qtt,
+                'detailPrice': detail_price,
+                'detailTotalPrice': detail_totalprice
+            },
+            success: function (data) {
+                alert(data);
+                location.reload();
+            }
+        });
+    })
+
+    //***** Delete order detail *****
+    $("body").delegate("#btn_delete_detail_order", "click", function () {
+        var order_id = $(this).attr('order_id');
+        var color_id = $(this).attr('color_id');
+        $.ajax({
+            url: '@Url.Action("DeleteDetailOrder", "Admin")' + '?orderId=' + order_id + '&colorId=' + color_id,
+            method: 'POST',
+            success: function (data) {
+                alert(data);
+            }
+        });
+    })
+
+    //***** Add order detail *****
+    $("body").delegate("#btn_add_detail_order_name", "click", function () {
+        $("#btn_add_onemore_detail_order_name").css("display", "inline-block");//show button add
+        $("#btn_update_detail_order_name").css("display", "none");//hide button update
+        var order_id = $(this).attr('order_id');
+        $("#selProductName").attr('order_id', order_id);
+        $("#btn_add_onemore_detail_order_name").attr('order_id', order_id);
+        GetSelProductNameNoParams();
+    })
+
+    $("body").delegate("#btn_add_onemore_detail_order_name", "click", function () {
+        var parents = $(this).parent().parent();
+        var order_id = $(this).attr('order_id');
+        var new_prod_id = parents.find("#selProductName").val();
+        var new_color_id = parents.find("#selColorProductName").val();
+        var detail_qtt = parents.find("#input_update_order_quantity").val();
+        var detail_price = parents.find("#input_update_order_price").text().replace(/[^\d]/g, '');
+        var detail_totalprice = parents.find("#input_update_order_totalprice").text().replace(/[^\d]/g, '');
+        $.ajax({
+            url: '@Url.Action("AddDetailOrderProduct", "Admin")',
+            method: 'POST',
+            data: {
+                'orderId': order_id,
+                'newProdId': new_prod_id,
+                'newColorId': new_color_id,
+                'detailQtt': detail_qtt,
+                'detailPrice': detail_price,
+                'detailTotalPrice': detail_totalprice
+            },
+            success: function (data) {
+                alert(data);
+                location.reload();
+            }
+        });
+    })
+    //checking valid detail order form
+    function validateFormDetail() {
+        var parents = $("#btn_submit_form").parent().parent();
+        var x = parents.find("#input_update_order_quantity").val();
+        if (x == null || x == "") {
+            alert("Phải nhập số lượng");
+            return false;
+        }
+        isValidDetailForm = 1;
+    }
+</script>
+
+<h2>QUẢN LÝ HÓA ĐƠN</h2>
+
+<p>
+    <button type="button" id="btn_order_add" class="btn btn-info" data-toggle="modal" data-target="#modal_edit_order">Thêm mới</button>
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.order_id)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.order_checkout)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.order_day)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.order_deliveryday)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.order_place)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.order_username)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td id="order_id_store">
+            @Html.DisplayFor(modelItem => item.order_id)
+        </td>
+        <td id="order_checkout_store">
+            @Html.DisplayFor(modelItem => item.order_checkout)
+        </td>
+        <td id="order_day_store">
+            @Html.DisplayFor(modelItem => item.order_day)
+        </td>
+        <td id="order_deliveryday_store">
+            @Html.DisplayFor(modelItem => item.order_deliveryday)
+        </td>
+        <td id="order_place_store">
+            @Html.DisplayFor(modelItem => item.order_place)
+        </td>
+        <td id="order_username_store">
+            @Html.DisplayFor(modelItem => item.order_username)
+        </td>
+        <td>
+            <button type="button" id="btn_order_update" class="btn btn-info" data-dismiss="modal" data-toggle="modal" data-target="#modal_edit_order" order_id="@item.order_id" order_userid="@item.order_userid">Sửa</button>
+            <button type="button" id="btn_order_detail" class="btn btn-info" data-dismiss="modal" data-toggle="modal" data-target="#modal_detail_order" order_id="@item.order_id">Chi Tiết</button>
+            <button type="button" id="btn_order_delete" class="btn btn-danger" data-dismiss="modal" data-toggle="modal" data-target="#modal_delete_order" order_id="@item.order_id">Xóa</button>
+        </td>
+    </tr>
+}
+
+</table>
+
+<!-- Modal Edit Order-->
+<div class="modal fade" id="modal_edit_order" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Xác nhận sửa</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" onsubmit="return validateForm()">
+                    <div class="checkbox">
+                        <div class="col-sm-offset-3 col-sm-6" id="checkout">
+                            
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-5">Ngày đặt hàng</label>
+                        <div class="col-sm-offset-3 col-sm-6">
+                            <input type="date" class="form-control" id="input_update_order_day" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-5">Ngày giao hàng</label>
+                        <div class="col-sm-offset-3 col-sm-6">
+                            <input type="date" class="form-control" id="input_update_order_deliveryday" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-5">Nhập nơi nhận hàng</label>
+                        <div class="col-sm-offset-3 col-sm-6">
+                            <input type="text" class="form-control" id="input_update_order_place" placeholder="Nhập nơi nhận hàng">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-5 sr-only">Tên khách hàng</label>
+                        <div class="col-sm-offset-3 col-sm-6">
+                            <select id="sel_name_user"></select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" style="display:none" id="btn_submit_form" />
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Quay lại</button>
+                <button type="button" class="btn btn-success" id="btn_update_order_name">Sửa</button>
+                <button type="button" class="btn btn-success" id="btn_add_order_name" style="display: none">Thêm</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Delete Order-->
+<div class="modal fade" id="modal_delete_order" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Xác nhận xóa</h4>
+            </div>
+            <div class="modal-body">
+                <p>Bạn có chắc chắn muốn xóa đơn hàng này?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-info" data-dismiss="modal" id="btn_delete_order_name">Xóa</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Quay lại</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Show Detail Order-->
+<div class="modal fade" id="modal_detail_order" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Chi Tiết Hóa Đơn</h4>
+            </div>
+            <div class="modal-body">
+                <table class="table">
+                    <tbody>
+                        <tr id="detail_order_product">
+                            <th>
+                                Sản Phẩm
+                            </th>
+                            <th>
+                                Số Lượng
+                            </th>
+                            <th>
+                                Đơn Giá
+                            </th>
+                            <th>
+                                Thành Tiền
+                            </th>
+                            <th></th>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td class="title_total_detail_order_p" colspan="3"><h4>Tổng Tiền: </h4></td>
+                            <td class="total_detail_order_p" colspan="3"><h4 id="total_detail_order_p"></h4></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-info" id="btn_add_detail_order_name" data-toggle="modal" data-target="#modal_edit_order_detail">Thêm mới</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Quay lại</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Edit Detail Order-->
+<div class="modal fade" id="modal_edit_order_detail" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Xác nhận sửa</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" onsubmit="return validateFormDetail()">
+                    <div class="form-group">
+                        <label class="control-label col-sm-4">Tên Sản Phẩm</label>
+                        <div class="col-sm-offset-3 col-sm-6">
+                            <select id="selProductName"></select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-4">Chọn Màu Sản Phẩm</label>
+                        <div class="col-sm-offset-3 col-sm-6">
+                            <select id="selColorProductName"></select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-4">Số Lượng</label>
+                        <div class="col-sm-offset-3 col-sm-6">
+                            <input type="number" class="form-control" id="input_update_order_quantity" min="1" onkeydown="javascript: return event.keyCode == 69 || event.keyCode == 189 ? false : true">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-4">Đơn Giá</label>
+                        <div class="col-sm-offset-3 col-sm-6" id="input_update_order_price"></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-4">Thành Tiền</label>
+                        <div class="col-sm-offset-3 col-sm-6" id="input_update_order_totalprice"></div>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" style="display:none" id="btn_submit_form" />
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Quay lại</button>
+                <button type="button" class="btn btn-success" id="btn_update_detail_order_name">Sửa</button>
+                <button type="button" class="btn btn-success" id="btn_add_onemore_detail_order_name" style="display: none">Thêm</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    label.control-label.col-sm-7 {
+        padding-top: 0;
+        font-weight: bold;
+        margin-bottom: 15px;
+    }
+
+    #detail_order_product th, tr td{
+        text-align: center;
+    }
+
+    .table tbody > tr > th {
+        border-top: none;
+        text-align: center;
+    }
+    .title_total_detail_order_p{
+        text-align:right;
+    }
+    .table{
+        margin-bottom:0;
+    }
+    .total_detail_order_p{
+        text-align:left;
+    }
+</style>

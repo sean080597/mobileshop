@@ -1,0 +1,12 @@
+﻿<div class="brands_products">
+    <!--brands_products-->
+    <h2>Thương Hiệu</h2>
+    <div class="brands-name">
+        <ul class="nav nav-pills nav-stacked">
+           @foreach (var item in Model)
+           {
+            <li><a href="@Url.Action("ItemsForBrand", "Items", new { id = item.Id})"> @*<span class="pull-right">(@item.Quantity)</span>*@@item.Name</a></li>
+           }
+        </ul>
+    </div>
+</div><!--/brands_products-->

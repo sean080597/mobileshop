@@ -1,0 +1,120 @@
+﻿@using MobileShop.Models
+@model List<ItemInCart>
+
+@{
+    ViewBag.Title = "OrderCart";
+    Layout = "~/Views/Shared/_LayoutMobiePhone.cshtml";
+}
+@section OverridesStyles{
+    <style>
+        section#slider {
+            display: none;
+        }
+
+        div#left-side {
+            display: none;
+        }
+
+        div.padding-right {
+            width: 100%;
+        }
+    </style>
+}
+
+<h2 style="text-align: center">THÔNG TIN HÀNG HÓA</h2>
+
+<section id="cart_items">
+    <div class="container">
+        <div class="table-responsive cart_info">
+            <table class="table table-condensed">
+                <thead>
+                    <tr class="cart_menu">
+                        <td class="image">Sản phẩm</td>
+                        <td class="description"></td>
+                        <td class="price">Giá</td>
+                        <td class="quantity">Số Lượng</td>
+                        <td class="total">Thành Tiền</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+            {
+                        <tr>
+                            <td class="cart_product">
+                                <a href=""><img src="/images/products/@item.image" alt="" width="100"></a>
+                            </td>
+                            <td class="cart_description">
+                                <h4><a href="">@item.name @item.color_name</a></h4>
+                                <p>Web ID: 1089772</p>
+                            </td>
+                            <td class="cart_price">
+                                <p>@String.Format("{0:0,0}", @item.price) VNĐ</p>
+                            </td>
+                            <td class="cart_quantity">
+                                <div class="cart_quantity_button">
+                                    <input class="order_cart_quantity" type="text" name="quantity" value="@item.quantity" disabled>
+                                </div>
+                            </td>
+                            <td class="cart_total">
+                                <p id='total_price_@item.id-@item.idcolor' class="cart_total_price">@String.Format("{0:0,0}", @item.Total()) VNĐ</p>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot style="border-top:1px solid #ccc">
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td>Tổng số lượng:</td>
+                        <td id="total_quantity">@ViewBag.TotalQuantity</td>
+                        <td>
+                            <p class="cart_total_price" id="all_total_price">
+                                @String.Format("{0:0,0}", ViewBag.TotalPrice)
+                            </p>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</section>
+
+<h2 style="text-align: center">THÔNG TIN ĐẶT HÀNG</h2>
+@{
+    User cus = (User)Session["Customer"];
+}
+
+<table align="center">
+    @using (Html.BeginForm())
+    {
+        @Html.ValidationSummary(true)
+        <tr style="height:40px">
+            <td>Họ tên khách hàng:</td>
+            <td style="font-weight:bold">@cus.UserName</td>
+        </tr>
+        <tr style="height:40px">
+            <td>Địa chỉ:</td>
+            <td style="font-weight:bold">@cus.UserAddress</td>
+        </tr>
+        <tr style="height:40px">
+            <td>Điện thoại:</td>
+            <td style="font-weight:bold">@cus.NPhone</td>
+        </tr>
+        <tr style="height:40px">
+            <td>Ngày đặt:</td>
+            <td style="font-weight:bold">@DateTime.Now.ToShortDateString()</td>
+        </tr>
+        <tr style="height:40px">
+            <td>Ngày giao hàng:</td>
+            <td style="font-weight:bold">
+                <input type="date" name="DeliveryDay" />
+            </td>
+        </tr>
+        <tr style="height:40px">
+            <td colspan="2" align="center">
+                <input type="submit" value="ĐỒNG Ý ĐẶT HÀNG" class="btn btn-success" style="margin: 20px 0" id="btn_submit_form" />
+            </td>
+            <td></td>
+        </tr>
+    }
+</table>

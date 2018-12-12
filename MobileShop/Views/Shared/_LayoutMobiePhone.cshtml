@@ -1,0 +1,239 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>Home | E-Shopper</title>
+    <link href="/Content/bootstrap.min.css" rel="stylesheet">
+    <link href="/Content/font-awesome.min.css" rel="stylesheet">
+    <link href="/Content/prettyPhoto.css" rel="stylesheet">
+    <link href="/Content/price-range.css" rel="stylesheet">
+    <link href="/Content/animate.css" rel="stylesheet">
+    <link href="/Content/main.css" rel="stylesheet">
+    <link href="/Content/responsive.css" rel="stylesheet">
+    <!--[if lt IE 9]>
+    <script src="js/html5shiv.js"></script>
+    <script src="js/respond.min.js"></script>
+    <![endif]-->
+    <link rel="shortcut icon" href="/images/ico/favicon.ico">
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="images/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="images/ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
+    @Styles.Render("~/Content/main.css")
+    @RenderSection("OverridesStyles",false)
+    <style>
+        #map {
+            height: 200px;
+            width: 100%;
+            margin-top:20px;
+            border:1px solid #ccc;
+            border-radius:4px;
+        }
+        div.sticky {
+            position: -webkit-sticky;
+            position: sticky;
+            top: 0;
+            padding: 0;
+            z-index: 1000;
+            margin: 0 auto;
+        }
+        .purple-bg{
+            background-color: #8A0651;
+        }
+    </style>
+</head>
+<body>
+    
+    <header id="header">
+        <!--header-->
+        <div class="header_top">
+            <!--header_top-->
+            
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="contactinfo">
+                            <ul class="nav nav-pills">
+                                <li><a href="#"><i class="fa fa-phone"></i> +84 901 49 10 40</a></li>
+                                <li><a href="#"><i class="fa fa-envelope"></i> camcuongdang@gmail.com</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="social-icons pull-right">
+                            <ul class="nav navbar-nav">
+                                <li><a href="#"><i class="fa fa-facebook"></i></a></li>
+                                <li><a href="#"><i class="fa fa-twitter"></i></a></li>
+                                <li><a href="#"><i class="fa fa-google-plus"></i></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div><!--/header_top-->
+
+        <div class="header-middle">
+            <!--header-middle-->
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div class="logo pull-left">
+                            <a href="@Url.Action("Index","NewHome")"><img src="/images/home/logo.png" alt="" /></a>
+                        </div>                        
+                    </div>
+                    <div class="col-sm-8">
+                        <div class="search_box pull-right">
+                            <input type="text" placeholder="Search" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div><!--/header-middle-->
+
+    </header><!--/header-->
+    <div class="sticky">
+        <div class="container">
+            <div class="row row-navbar">
+                <div class="col-sm-4">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                            <span class="sr-only">Toggle navigation</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                    </div>
+                    <div class="mainmenu pull-left">
+                        <ul class="nav navbar-nav collapse navbar-collapse">
+                            <li class="purple-bg"><a href="@Url.Action("Index","NewHome")" class="active">Trang Chủ</a></li>
+                            <li class="dropdown">
+                                <a href="#">Shop<i class="fa fa-angle-down"></i></a>
+                                <ul role="menu" class="sub-menu">
+                                    <li><a href="@Url.Action("CartPartial", "Cart")">Giỏ Hàng</a></li>
+                                    <li><a href="@Url.Action("Login","Users")">Đăng Nhập</a></li>
+                                </ul>
+                            </li>
+                            <li><a href="contact-us.html">Liên Hệ</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-sm-8">
+                    <div class="shop-menu pull-right">
+                        <ul class="nav navbar-nav collapse navbar-collapse">
+                            <li><a href="@Url.Action("Login","Users")"><i class="fa fa-user"></i> Tài Khoản</a></li>
+                            <li>
+                                @Html.Action("CartPartial", "Cart")
+                            </li>
+                            <li><a href="@Url.Action("Login","Users")"><i class="fa fa-lock"></i> Đăng Nhập</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @Html.Action("Slider","NewHome")
+    <section>
+        <div class="container" id="container-height">
+            <div class="row">
+                <div class="col-sm-3" id="left-side">
+                    <div class="left-sidebar">
+                        @Html.Action("Types","NewHome")
+                        @Html.Action("Brands","NewHome")
+                        
+                        <div class="shipping text-center">
+                            <!--shipping-->
+                            <img src="~/images/home/IPhone-X.jpg" width="100%" alt="" />
+                        </div><!--/shipping-->
+
+                        <div class="price-range" style="visibility:hidden;">
+                            <!--price-range-->
+                            <h2>Price Range</h2>
+                        </div><!--/price-range-->
+
+                        
+
+                    </div>
+                </div>
+
+                <div class="col-sm-9 padding-right">
+                    <div>
+                        @RenderBody()
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <footer id="footer">
+
+        <div class="footer-widget">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-offset-1 col-sm-3">
+                        <div class="single-widget">
+                            <h2>Liên Hệ</h2>
+                            <ul class="nav nav-pills nav-stacked">
+                                <li><a href="#">Giới thiệu công ty</a></li>
+                                <li><a href="#">Tuyển dụng</a></li>
+                                <li><a href="#">Góp ý / Khiếu nại</a></li>
+                                <li><a href="#">Trợ giúp</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="single-widget">
+                            <h2>Hỗ trợ khác hàng</h2>
+                            <ul class="nav nav-pills nav-stacked foot-contract">
+                                <li>Gọi mua hàng <strong>1800.0009</strong></li>
+                                <li>Gọi khiếu nại <strong>1800.0008</strong></li>
+                                <li>Gọi bảo hành <strong>1800.0007</strong></li>
+                                <li>Gọi hỗ trợ kỹ thuật <strong>1800.0006</strong></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div id="map"></div>
+                        <script>
+                          function initMap() {
+                              var uluru = { lat: 10.808671, lng: 106.716737 };
+                            var map = new google.maps.Map(document.getElementById('map'), {
+                              zoom: 16,
+                              center: uluru
+                            });
+                            var marker = new google.maps.Marker({
+                              position: uluru,
+                              map: map
+                            });
+                          }
+                        </script>
+                        <script async defer
+                                src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBlGCX-MzU3DvQkl6iJP7IAk1p8f02hJhg&callback=initMap">
+                        </script>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <div class="container">
+                <div class="row">
+                    <p class="pull-left">Copyright © 2018 Dang Cam Cuong.</p>
+                    <p class="pull-right">Designed by <span><a target="_blank" href="#">Author</a></span></p>
+                </div>
+            </div>
+        </div>
+
+    </footer><!--/Footer-->
+    <script src="/Scripts/jquery.js"></script>
+    <script src="/Scripts/bootstrap.min.js"></script>
+    <script src="/Scripts/jquery.scrollUp.min.js"></script>
+    <script src="/Scripts/price-range.js"></script>
+    <script src="/Scripts/jquery.prettyPhoto.js"></script>
+    <script src="/Scripts/main.js"></script>
+</body>
+</html>

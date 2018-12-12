@@ -1,0 +1,378 @@
+﻿@model IEnumerable<MobileShop.Models.ViewModel.UserRoleViewModel>
+
+@{
+    ViewBag.Title = "UserControl";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<script src="/Scripts/jquery.js"></script>
+<script>
+    var isValidForm;
+    //update user info
+    $("body").delegate("#btn_user_update", "click", function () {
+        $("h4.modal-title").html("Xác nhận sửa");//change text of title
+        $("#btn_update_user_name").css("display", "inline-block");//show button update
+        $("#btn_add_user_name").css("display", "none");//hide button add
+        $("#btn_update_user_name").attr('role_id', $(this).attr('role_id'));//add rold_id attribute to button update in modal
+        $("#btn_update_user_name").attr('user_id', $(this).attr('user_id'));//add rold_id attribute to button update in modal
+
+        var parents = $(this).parent().parent();
+        var x = parents.find("#user_name_store").text().trim();
+        $("#input_update_user_name").val(x);
+        x = parents.find("#user_acc_store").text().trim();
+        $("#input_update_user_acc").val(x);
+        x = parents.find("#user_pass_store").text().trim();
+        $("#input_update_user_pass").val(x);
+        x = parents.find("#user_addr_store").text().trim();
+        $("#input_update_user_addr").val(x);
+        x = parents.find("#user_phone_store").text().trim();
+        $("#input_update_user_phone").val(x);
+        x = parents.find("#user_email_store").text().trim();
+        $("#input_update_user_email").val(x);
+        x = parents.find("#user_idCart_store").text().trim();
+        $("#input_update_user_idCart").val(x);
+
+        var role_id = $(this).attr('role_id');
+        $.ajax({
+            url: '@Url.Action("GetUserRole", "Admin")' + '?roleId=' + role_id,
+            method: 'POST',
+            success: function (data) {
+                $("#sel_role_user").html(data);
+            }
+        });
+    })
+
+    $("body").delegate("#btn_update_user_name", "click", function () {
+        validateForm();
+        if (isValidForm == 1) {
+            var role_id = $(this).attr('role_id');
+            var user_id = $(this).attr('user_id');
+
+            var parents = $(this).parent().parent();
+            var user_name = parents.find("#input_update_user_name").val();
+            var user_acc = parents.find("#input_update_user_acc").val();
+            var user_pass = parents.find("#input_update_user_pass").val();
+            var user_addr = parents.find("#input_update_user_addr").val();
+            var user_phone = parents.find("#input_update_user_phone").val();
+            var user_email = parents.find("#input_update_user_email").val();
+            var user_idCart = parents.find("#input_update_user_idCart").val();
+
+            $.ajax({
+                url: '@Url.Action("EditUser", "Admin")',
+                method: 'POST',
+                data: {
+                    'userId': user_id,
+                    'userName': user_name,
+                    'userAcc': user_acc,
+                    'userPass': user_pass,
+                    'userAddr': user_addr,
+                    'userPhone': user_phone,
+                    'userEmail': user_email,
+                    'idCart': user_idCart,
+                    'roleId': role_id
+                },
+                success: function (data) {
+                    alert(data);
+                    location.reload();
+                }
+            });
+        }
+    })
+
+    //delete user name
+    $("body").delegate("#btn_user_delete", "click", function () {
+        $("#btn_delete_user_name").attr('user_id', $(this).attr('user_id'));
+    })
+
+    $("body").delegate("#btn_delete_user_name", "click", function () {
+        var user_id = $(this).attr('user_id');
+
+        $.ajax({
+            url: '@Url.Action("DeleteUser", "Admin")' + '?userId=' + user_id,
+            method: 'POST',
+            success: function (data) {
+                alert(data);
+                location.reload();
+            }
+        });
+    });
+
+    //add user name
+    $("body").delegate("#btn_user_add", "click", function () {
+        $("#btn_update_user_name").css("display", "none");
+        $("#btn_add_user_name").css("display", "inline-block");
+        $("h4.modal-title").html("Xác nhận thêm");
+        $("#input_update_user_name").val("");
+        $("#input_update_user_acc").val("");
+        $("#input_update_user_pass").val("");
+        $("#input_update_user_addr").val("");
+        $("#input_update_user_phone").val("");
+        $("#input_update_user_email").val("");
+        $("#input_update_user_idCart").val("");
+
+        var role_id = $("#btn_user_update").attr('role_id');
+        $.ajax({
+            url: '@Url.Action("GetUserRole", "Admin")' + '?roleId=' + role_id,
+            method: 'POST',
+            success: function (data) {
+                $("#sel_role_user").html(data);
+            }
+        });
+    })
+
+    $("body").delegate("#btn_add_user_name", "click", function () {
+        validateForm();
+        if (isValidForm == 1) {
+            var parents = $(this).parent().parent();
+            var user_name = parents.find("#input_update_user_name").val();
+            var user_acc = parents.find("#input_update_user_acc").val();
+            var user_pass = parents.find("#input_update_user_pass").val();
+            var user_addr = parents.find("#input_update_user_addr").val();
+            var user_phone = parents.find("#input_update_user_phone").val();
+            var user_email = parents.find("#input_update_user_email").val();
+            var user_idCart = parents.find("#input_update_user_idCart").val();
+            var role_id = $("#sel_role_user").val();
+
+            $.ajax({
+                url: '@Url.Action("CreateNewUser", "Admin")',
+                method: 'POST',
+                data: {
+                    'userName': user_name,
+                    'userAcc': user_acc,
+                    'userPass': user_pass,
+                    'userAddr': user_addr,
+                    'userPhone': user_phone,
+                    'userEmail': user_email,
+                    'idCart': user_idCart,
+                    'roleId': role_id
+                },
+                success: function (data) {
+                    alert(data);
+                    location.reload();
+                }
+            });
+        }
+    });
+
+    //checking valid form
+    function validateForm() {
+        var parents = $("#btn_submit_form").parent().parent();
+        var x = parents.find("#input_update_user_name").val();
+        if (x == null || x == "") {
+            alert("Phải nhập họ tên");
+            return false;
+        }
+
+        x = parents.find("#input_update_user_acc").val();
+        if (x == null || x == "") {
+            alert("Phải nhập tên tài khoản");
+            return false;
+        }
+
+        x = parents.find("#input_update_user_pass").val();
+        if (x == null || x == "") {
+            alert("Phải nhập mật khẩu");
+            return false;
+        }
+
+        x = parents.find("#input_update_user_addr").val();
+        if (x == null || x == "") {
+            alert("Phải nhập địa chỉ");
+            return false;
+        }
+
+        x = parents.find("#input_update_user_phone").val();
+        if (x == null || x == "") {
+            alert("Phải nhập số điện thoại");
+            return false;
+        }
+
+        x = parents.find("#input_update_user_email").val();
+        if (x == null || x == "") {
+            alert("Phải nhập email");
+            return false;
+        }
+
+        x = parents.find("#input_update_user_idCart").val();
+        if (x == null || x == "") {
+            alert("Phải nhập số CMND");
+            return false;
+        }
+        isValidForm = 1;
+    }
+</script>
+
+<h2>QUẢN LÝ NGƯỜI DÙNG</h2>
+
+<p>
+    <button type="button" id="btn_user_add" class="btn btn-info" data-toggle="modal" data-target="#modal_edit_user">Thêm mới</button>
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.user_name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.user_acc)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.user_pass)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.user_addr)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.user_phone)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.user_mail)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.user_idCart)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.user_rolename)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td id="user_name_store">
+                @Html.DisplayFor(modelItem => item.user_name)
+            </td>
+            <td id="user_acc_store">
+                @Html.DisplayFor(modelItem => item.user_acc)
+            </td>
+            <td id="user_pass_store">
+                @Html.DisplayFor(modelItem => item.user_pass)
+            </td>
+            <td id="user_addr_store">
+                @Html.DisplayFor(modelItem => item.user_addr)
+            </td>
+            <td id="user_phone_store">
+                @Html.DisplayFor(modelItem => item.user_phone)
+            </td>
+            <td id="user_email_store">
+                @Html.DisplayFor(modelItem => item.user_mail)
+            </td>
+            <td id="user_idCart_store">
+                @Html.DisplayFor(modelItem => item.user_idCart)
+            </td>
+            <td id="user_rolename_store">
+                @Html.DisplayFor(modelItem => item.user_rolename)
+            </td>
+            <td>
+                <button type="button" id="btn_user_update" class="btn btn-info" data-toggle="modal" data-target="#modal_edit_user" user_id="@item.user_id" role_id="@item.user_roleid">Sửa</button>
+                <button type="button" id="btn_user_delete" class="btn btn-danger" data-toggle="modal" data-target="#modal_delete_user" user_id="@item.user_id">Xóa</button>
+            </td>
+        </tr>
+    }
+
+</table>
+
+<!-- Modal Edit User-->
+<div class="modal fade" id="modal_edit_user" role="dialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Xác nhận sửa</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" onsubmit="validateForm()">
+                    <div class="form-group">
+                        <label class="control-label col-sm-4 sr-only">Nhập họ tên</label>
+                        <div class="col-sm-offset-3 col-sm-6">
+                            <input type="text" class="form-control" id="input_update_user_name" placeholder="Nhập họ tên" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-4 sr-only">Nhập tên đăng nhập</label>
+                        <div class="col-sm-offset-3 col-sm-6">
+                            <input type="text" class="form-control" id="input_update_user_acc" placeholder="Nhập tên đăng nhập" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-4 sr-only">Nhập mật khẩu</label>
+                        <div class="col-sm-offset-3 col-sm-6">
+                            <input type="text" class="form-control" id="input_update_user_pass" placeholder="Nhập mật khẩu" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-4 sr-only">Nhập địa chỉ</label>
+                        <div class="col-sm-offset-3 col-sm-6">
+                            <input type="text" class="form-control" id="input_update_user_addr" placeholder="Nhập địa chỉ" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-4 sr-only">Nhập số điện thoại</label>
+                        <div class="col-sm-offset-3 col-sm-6">
+                            <input type="tel" class="form-control" id="input_update_user_phone" placeholder="Nhập số điện thoại" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-4 sr-only">Nhập email</label>
+                        <div class="col-sm-offset-3 col-sm-6">
+                            <input type="email" class="form-control" id="input_update_user_email" placeholder="Nhập email" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-4 sr-only">Nhập CMND</label>
+                        <div class="col-sm-offset-3 col-sm-6">
+                            <input type="number" class="form-control" id="input_update_user_idCart" placeholder="Nhập CMND" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-4 sr-only">Vai trò</label>
+                        <div class="col-sm-offset-3 col-sm-6">
+                            <select id="sel_role_user">
+                                
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" style="display:none" id="btn_submit_form" />
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Quay lại</button>
+                <button type="button" class="btn btn-success" id="btn_update_user_name">Sửa</button>
+                <button type="button" class="btn btn-success" id="btn_add_user_name" style="display: none">Thêm</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Delete User-->
+<div class="modal fade" id="modal_delete_user" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Xác nhận xóa</h4>
+            </div>
+            <div class="modal-body">
+                <p>Bạn có chắc chắn muốn xóa nhãn hiệu này?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-info" data-dismiss="modal" id="btn_delete_user_name">Xóa</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Quay lại</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    td#user_addr_store {
+        width: 10%;
+    }
+    td#user_name_store {
+        width: 10%;
+    }
+    td #user_name_store, #user_acc_store, #user_pass_store, #user_addr_store, #user_phone_store, #user_email_store, #user_idCart_store, #user_rolename_store{
+        vertical-align: middle;
+    }
+</style>

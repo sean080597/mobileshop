@@ -1,0 +1,98 @@
+﻿
+@{
+    ViewBag.Title = "Register";
+    Layout = "~/Views/Shared/_LayoutMobiePhone.cshtml";
+}
+@section OverridesStyles{
+    <style>
+        section#slider {
+            display: none;
+        }
+    </style>        
+}
+
+<h2 class="text-center" id="tettt">Đăng Ký</h2>
+<div class="container">
+    <div class="row">
+        <div class="col-md-offset-1 col-md-10">
+            <section id="registerForm">
+                @using (Html.BeginForm("Register", "Users", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+                {
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    <div class="form-group">
+                        <label class="col-md-3 control-label">Tài khoản *</label>
+                        <div class="col-md-4">
+                            @Html.TextBox("userAcc", null, new { @class = "form-control" })
+                        </div>
+                        <div class="col-md-5">
+                            <font color="red"><label class="control-label" style="text-align:left;">@ViewBag.accEr</label></font>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-3">Mật khẩu *</label>
+                        <div class="col-md-4">
+                            @Html.Password("pwd",null, new { @class="form-control"})
+                        </div>
+                        <div class="col-md-5">
+                            <font color="red"><label class="control-label" style="text-align:left;">@ViewBag.pwd1Er</label></font>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-3">Nhập lại Mật khẩu *</label>
+                        <div class="col-md-4">
+                            @Html.Password("pwd2", null, new { @class = "form-control" })
+                        </div>
+                        <div class="col-md-5">
+                            <font color="red"><label class="control-label" style="text-align:left;">@ViewBag.pwd2Er</label></font>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-3">Họ Tên *</label>
+                        <div class="col-md-4">
+                            @Html.TextBox("userName", null, new { @class = "form-control" })
+                        </div>
+                        <div class="col-md-5">
+                            <font color="red"><label class="control-label" style="text-align:left;">@ViewBag.nameEr</label></font>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-3">Địa chỉ</label>
+                        <div class="col-md-4">
+                            @Html.TextBox("address", null, new { @class = "form-control" })
+                        </div>                        
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-3">Điện thoại *</label>
+                        <div class="col-md-4">
+                            @Html.TextBox("phoneNum", null, new { @class = "form-control", type = "number"})
+                        </div>
+                        <div class="col-md-5">
+                            <font color="red"><label class="control-label" style="text-align:left;">@ViewBag.phoneNumEr</label></font>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-3">Email *</label>
+                        <div class="col-md-4">
+                            @Html.TextBox("email", null, new { @class = "form-control", type = "email" })
+                        </div>
+                        <div class="col-md-5">
+                            <font color="red"><label class="control-label" style="text-align:left;">@ViewBag.emailEr</label></font>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-3">CMND</label>
+                        <div class="col-md-4">
+                            @Html.TextBox("cmnd", null, new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-offset-3 col-md-4">
+                            <input class="btn btn-primary btn-block" type="submit" value="Đăng ký" />
+                        </div>
+                    </div>
+
+                }
+            </section>
+        </div>
+    </div>
+</div>

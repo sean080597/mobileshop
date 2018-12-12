@@ -1,0 +1,8 @@
+﻿/*============================================= CUSTOM CSS ====================================*/
+/* Color selected list */
+.product-details .product-information select#selOptionColor{
+	width: 20%;
+	border: 1px solid #ccc;
+	border-radius: 2px;
+	margin-bottom: 10px;
+}

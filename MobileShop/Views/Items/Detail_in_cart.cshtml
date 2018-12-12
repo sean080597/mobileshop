@@ -1,0 +1,186 @@
+﻿@model IEnumerable<MobileShop.Models.ViewModel.ProductViewModel>
+@{
+    ViewBag.Title = "Detail_in_cart";
+    Layout = "~/Views/Shared/_LayoutMobiePhone.cshtml";
+}
+@section OverridesStyles{
+    <style>
+        section#slider {
+            display: none;
+        }
+    </style>
+}
+
+<script src="/Scripts/jquery.js"></script>
+<script>
+    $(document).ready(function () {
+        //tracking change of radio
+        $('input[name=selOptionColor]').change(function () {
+            //set image corresponding to the checked image
+            var img_p = $(this).attr('img_p');
+            $("#img_product").attr('src', '/images/products/' + img_p);
+
+            //set price corresponding to the checked image
+            var price_p = $(this).val();
+            var price = price_p.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            document.getElementById("price_product").innerHTML = price + " VNĐ";
+
+            //===================== idColor handle ==============================
+            var link = $("#add_cart_link").attr('href'); //get href of "Thêm vào giỏ"
+
+            var start_pos = link.indexOf("idColor") + 8; //get position of idColor + number of string "idColor=" is (8)
+            var end_pos = link.split("&").pop().length + 1; //get position from last to first appearing character "&" + character "&" (1)
+            var mid_pos = link.length - start_pos - end_pos; //get quantity of characters of current idColor in href
+            var need_replace_id = link.substr(start_pos, mid_pos); //get string from start_pos to mid_pos
+
+            var need_replace_str = "idColor=" + need_replace_id; //get the string needs to replace
+
+            var x = $(this).attr('idcolor'); //get idColor of checked product
+            var replace_str = "idColor=" + x; //the string to replace when select a product
+
+            var rep = link.replace(need_replace_str, replace_str); //replace current idColor to idColor of selected product
+            $("#add_cart_link").attr('href', rep); //assign replaced link for href
+        });
+    });
+
+    //checking checked radio if checked then assign its image to show first
+    function isCheckedRadio() {
+        if ($("input:radio[name='selOptionColor']").is(":checked")) {
+            var img_p = $("input:radio[name='selOptionColor']:checked").attr("img_p");
+            $("#img_product").attr('src', '/images/products/' + img_p);
+
+            var price_p = $("input:radio[name='selOptionColor']:checked").val();
+            var price = price_p.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            document.getElementById("price_product").innerHTML = price + " VNĐ";
+
+            //===================== idColor handle ==============================
+            var link = $("#add_cart_link").attr('href'); //get href of "Thêm vào giỏ"
+
+            var start_pos = link.indexOf("idColor") + 8; //get position of idColor + number of string "idColor=" is (8)
+            var end_pos = link.split("&").pop().length + 1; //get position from last to first appearing character "&" + character "&" (1)
+            var mid_pos = link.length - start_pos - end_pos; //get quantity of characters of current idColor in href
+            var need_replace_id = link.substr(start_pos, mid_pos); //get string from start_pos to mid_pos
+
+            var need_replace_str = "idColor=" + need_replace_id; //get the string needs to replace
+
+            var x = $("input:radio[name='selOptionColor']:checked").attr('idcolor'); //get idColor of checked product
+            var replace_str = "idColor=" + x; //the string to replace when select a product
+
+            var rep = link.replace(need_replace_str, replace_str); //replace current idColor to idColor of selected product
+            $("#add_cart_link").attr('href', rep); //assign replaced link for href
+        }
+    }
+
+</script>
+
+<div class="product-details">
+    <!--product-details-->
+    <div class="col-sm-5">
+        <div class="view-product">
+            <img src="/images/404/404.png" id="img_product" />
+            <h3>ZOOM</h3>
+        </div>
+    </div>
+    <div class="col-sm-7">
+        <div class="product-information">
+            <!--/product-information-->
+            <img src="/images/product-details/new.jpg" class="newarrival" alt="" />
+            <h2>@ViewBag.Name</h2>
+            <form>
+                @{
+                    foreach (var item in Model)
+                    {
+                        if (item.IdColor == ViewBag.ColorId)
+                        {
+                            <label>
+                                <input type="radio" value="@item.Price" img_p="@item.Imagecolor" idcolor="@item.IdColor" name="selOptionColor" checked />
+                                <img src="/images/products/@item.Imagecolor" width="40">
+                            </label>
+                        }
+                        else
+                        {
+                            <label>
+                                <input type="radio" value="@item.Price" img_p="@item.Imagecolor" idcolor="@item.IdColor" name="selOptionColor" />
+                                <img src="/images/products/@item.Imagecolor" width="40">
+                            </label>
+                        }
+                    }
+                }
+            </form>
+
+            <img src="/images/product-details/rating.png" alt="" />
+            <span>
+                <span id="price_product">Price</span>
+                <label>Quantity:</label>
+                <input type="text" value="@ViewData["quantity"]" readonly />
+                <br />
+                <a href="@Url.Action("AddCart","Cart", new { idP = ViewData["idP"], idColor = 1, url = Request.Url.ToString()})" class="btn btn-default cart" onclick="showColorId()" id="add_cart_link">
+                    <i class="fa fa-shopping-cart"></i>
+                    Thêm Vào Giỏ
+                </a>
+            </span>
+            <p><b>Availability:</b> In Stock</p>
+            <p><b>Condition:</b> New</p>
+            <p><b>Brand:</b> @ViewBag.Brand</p>
+            <a href=""><img src="/images/product-details/share.png" class="share img-responsive" alt="" /></a>
+
+            <script>
+                //call here to run after finishing loaded page
+                window.onload = isCheckedRadio();
+            </script>
+
+        </div><!--/product-information-->
+    </div>
+</div><!--/product-details-->
+
+<div class="category-tab shop-details-tab">
+    <!--category-tab-->
+    <div class="col-sm-12">
+        <ul class="nav nav-tabs">
+            <li><a href="#details" data-toggle="tab">Mô Tả</a></li>
+            <li class="active"><a href="#reviews" data-toggle="tab">Reviews (5)</a></li>
+        </ul>
+    </div>
+    <div class="tab-content">
+        <!--detail----------------------------------------->
+        <div class="tab-pane fade" id="details">
+            <div class="col-sm-3">
+                <div class="product-image-wrapper">
+                    <div class="single-products">
+                        <div class="productinfo text-center">
+                            <img src="/images/home/gallery1.jpg" alt="" />
+                            <h2>$56</h2>
+                            <p>Easy Polo Black Edition</p>
+                            <button type="button" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!----review-------------------------------------------------->
+        <div class="tab-pane fade active in" id="reviews">
+            <div class="col-sm-12">
+                <ul>
+                    <li><a href=""><i class="fa fa-user"></i>EUGEN</a></li>
+                    <li><a href=""><i class="fa fa-clock-o"></i>12:41 PM</a></li>
+                    <li><a href=""><i class="fa fa-calendar-o"></i>31 DEC 2014</a></li>
+                </ul>
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+                <p><b>Write Your Review</b></p>
+
+                <form action="#">
+                    <span>
+                        <input type="text" placeholder="Your Name" />
+                        <input type="email" placeholder="Email Address" />
+                    </span>
+                    <textarea name=""></textarea>
+                    <b>Rating: </b> <img src="/images/product-details/rating.png" alt="" />
+                    <button type="button" class="btn btn-default pull-right">
+                        Submit
+                    </button>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div><!--/category-tab-->

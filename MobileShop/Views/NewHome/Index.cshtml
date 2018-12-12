@@ -1,0 +1,112 @@
+﻿@using PagedList.Mvc;
+@model PagedList.PagedList<MobileShop.Models.ViewModel.ProductViewModel>
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_LayoutMobiePhone.cshtml";
+}
+
+<div class="features_items">
+    <!--New_Items-->
+    <!--------------------------------foreach---------------------------------------------------->
+    <h2 class="title text-center">Sản phẩm mới</h2>
+    @foreach (var item in Model)
+    {
+        <div class="col-sm-4">
+            <div class="product-image-wrapper">
+                <div class="single-products">
+                    <div class="productinfo text-center">
+                        <img src="/images/products/@item.Imagecolor" alt="" />
+                        <h2>@String.Format("{0:#,##0}", item.Price) VNĐ</h2>
+                        <p>@item.Name @item.ColorName</p>
+                        @*<a href="@Url.Action("AddCart","Cart", new { @idP = item.ProductId, @idColor = 1, @url = Request.Url.ToString()})" class="btn btn-default add-to-cart">
+                            <i class="fa fa-shopping-cart"></i>
+                            Thêm Vào Giỏ
+                        </a>*@
+                    </div>
+                    <div class="product-overlay">
+                        <div class="overlay-content">
+                            <h2>Cấu Hình</h2>
+                            <p>@item.Cpu</p>
+                            <h2>Kích Thước  </h2>
+                            <p>@item.Screen</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="choose">
+                    <ul class="nav nav-pills nav-justified">
+                        @*<li><a href="#"><i class="fa fa-plus-square"></i>Yêu Thích</a></li>*@
+                        <li><a href="@Url.Action("Detail", "Items", new { id = item.Id})"><i class="fa fa-plus-square"></i>Xem Chi Tiết</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    }
+    <div class="clearfix"></div>
+</div><!--New_items-->
+
+
+@*<div class="recommended_items">
+    <!--recommended_items-->
+    <h2 class="title text-center">Sản phẩm bán chạy</h2>
+    <!---------------------------------Hot Items-------------------------------------------------->
+    <div id="recommended-item-carousel" class="carousel slide" data-ride="carousel">
+        <div class="carousel-inner">
+            <div class="item active">
+                <!-------foreach------------>
+                <div class="col-sm-4">
+                    <div class="product-image-wrapper">
+                        <div class="single-products">
+                            <div class="productinfo text-center">
+                                <img src="/images/home/recommend1.jpg" alt="" />
+                                <h2>$56</h2>
+                                <p>Easy Polo Black Edition</p>
+                                <a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Thêm Vào Giỏ</a>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="item">
+                <!--------foreach------------>
+                <div class="col-sm-4">
+                    <div class="product-image-wrapper">
+                        <div class="single-products">
+                            <div class="productinfo text-center">
+                                <img src="/images/home/recommend1.jpg" alt="" />
+                                <h2>$56</h2>
+                                <p>Easy Polo Black Edition</p>
+                                <a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Thêm Vào Giỏ</a>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <a class="left recommended-item-control" href="#recommended-item-carousel" data-slide="prev">
+            <i class="fa fa-angle-left"></i>
+        </a>
+        <a class="right recommended-item-control" href="#recommended-item-carousel" data-slide="next">
+            <i class="fa fa-angle-right"></i>
+        </a>
+    </div><!-----------------------------/Hot items------------------------------------------------>
+</div><!--/recommended_items-->*@
+@*Liên kết trang
+Trang@(Model.PageCount<Model.PageNumber?0:Model.PageNumber)/@Model.PageCount*@
+<div>
+    <br />
+</div>
+<div style="display:inline;">
+    @Html.PagedListPager(Model,page =>Url.Action("Index",new { page=page}))
+</div>
+<style>
+    .page-menu li {
+        display: inline;
+    }
+
+    ul.pagination {
+        margin-left: 35%;
+    }
+</style>
+

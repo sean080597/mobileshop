@@ -1,0 +1,107 @@
+﻿@model MobileShop.Models.Product
+
+@{
+    ViewBag.Title = "DetailProduct";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<h2>DetailProduct</h2>
+
+<div>
+    <h4>Product</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.ProductName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ProductName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Detail)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Detail)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Sale)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Sale)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ImageProduct)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ImageProduct)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Screen)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Screen)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CPU)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CPU)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.UpdateDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.UpdateDate)
+        </dd>
+
+        @*<dt>
+            @Html.DisplayNameFor(model => model.ProductPrice)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ProductPrice)
+        </dd>*@
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Quantity)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Quantity)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.TypeId)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.TypeId)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.BrandId)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.BrandId)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "EditProduct", new { id = Model.ProductId }) |
+    @Html.ActionLink("Back to List", "ProductControl")
+</p>

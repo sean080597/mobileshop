@@ -1,0 +1,149 @@
+﻿@model IEnumerable<MobileShop.Models.Brand>
+
+@{
+    ViewBag.Title = "BrandControl";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<script src="/Scripts/jquery.js"></script>
+<script>
+    //update brand name
+    $("body").delegate("#btn_brand_update", "click", function () {
+        $("h4.modal-title").html("Xác nhận sửa"); //change text of title
+        $("#btn_update_brand_name").css("display", "inline-block"); //show button update
+        $("#btn_add_brand_name").css("display", "none"); //hide button add
+        var brand_name = $(this).attr('brand_name'); //get brand name
+        $("#input_update_brand_name").val(brand_name); //set brand name for input to update
+        $("#btn_update_brand_name").attr('brand_id', $(this).attr('brand_id')); //add brand_id attribute to button update in modal
+    })
+
+    $("body").delegate("#btn_update_brand_name", "click", function () {
+        var brand_id = $(this).attr('brand_id'); //get brand_id attribute after adding above
+        var brand_name = $("#input_update_brand_name").val(); //get value of input to update
+
+        $.ajax({
+            url: '@Url.Action("EditBrand", "Admin")' + '?brandId=' + brand_id + '&brandName=' + brand_name,
+            method: 'POST',
+            success: function (data) {
+                alert(data);
+                location.reload();
+            }
+        });
+    });
+
+    //delete brand name
+    $("body").delegate("#btn_brand_delete", "click", function () {
+        $("#btn_delete_brand_name").attr('brand_id', $(this).attr('brand_id'));
+    })
+
+    $("body").delegate("#btn_delete_brand_name", "click", function () {
+        var brand_id = $(this).attr('brand_id');
+
+        $.ajax({
+            url: '@Url.Action("DeleteBrand", "Admin")' + '?brandId=' + brand_id,
+            method: 'POST',
+            success: function (data) {
+                alert(data);
+                location.reload();
+            }
+        });
+    });
+
+    //add brand name
+    $("body").delegate("#btn_brand_add", "click", function () {
+        $("#btn_update_brand_name").css("display", "none");
+        $("#btn_add_brand_name").css("display", "inline-block");
+        $("h4.modal-title").html("Xác nhận thêm");
+        $("#input_update_brand_name").val("");
+    })
+
+    $("body").delegate("#btn_add_brand_name", "click", function () {
+        var brand_name = $("#input_update_brand_name").val();
+        if (brand_name == null || brand_name == "")
+            alert("Vui lòng nhập nhãn hiệu mới");
+        else {
+            $.ajax({
+                url: '@Url.Action("CreateNewBrand", "Admin")' + '?brandName=' + brand_name,
+                method: 'POST',
+                success: function (data) {
+                    alert(data);
+                    location.reload();
+                }
+            });
+        }
+    });
+
+</script>
+
+<h2>THÊM MỚI THƯƠNG HIỆU</h2>
+
+<p>
+    <button type="button" id="btn_brand_add" class="btn btn-info" data-toggle="modal" data-target="#modal_edit_brand">Thêm mới</button>
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.BrandName)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.BrandName)
+        </td>
+        <td>
+            <button type="button" id="btn_brand_update" class="btn btn-info" data-toggle="modal" data-target="#modal_edit_brand" brand_id="@item.BrandId" brand_name="@item.BrandName">Sửa</button>
+            <button type="button" id="btn_brand_delete" class="btn btn-danger" data-toggle="modal" data-target="#modal_delete_brand" brand_id="@item.BrandId">Xóa</button>
+        </td>
+    </tr>
+}
+
+</table>
+
+<!-- Modal Edit Brand-->
+<div class="modal fade" id="modal_edit_brand" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Xác nhận sửa</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" >
+                    <div class="form-group">
+                        <label class="control-label col-sm-3">Tên nhãn hiệu</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="input_update_brand_name" placeholder="Nhập tên thương hiệu mới">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Quay lại</button>
+                <button type="button" class="btn btn-success" id="btn_update_brand_name">Sửa</button>
+                <button type="button" class="btn btn-success" id="btn_add_brand_name" style="display: none">Thêm</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Delete Brand-->
+<div class="modal fade" id="modal_delete_brand" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Xác nhận xóa</h4>
+            </div>
+            <div class="modal-body">
+                <p>Bạn có chắc chắn muốn xóa nhãn hiệu này?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-info" data-dismiss="modal" id="btn_delete_brand_name">Xóa</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Quay lại</button>
+            </div>
+        </div>
+    </div>
+</div>

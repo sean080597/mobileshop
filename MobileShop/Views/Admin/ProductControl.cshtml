@@ -1,0 +1,70 @@
+﻿@using PagedList.Mvc;
+@model PagedList.PagedList<MobileShop.Models.Product>
+@{
+    ViewBag.Title = "ProductControl";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<h2>Quản lý sản phẩm</h2>
+<h3 class="text-center">@ViewBag.ErRemove</h3>
+<a class="btn btn-primary" href="@Url.Action("CreateProduct","Admin")" role="button" style="margin-bottom:10px;">Thêm sản phẩm</a>
+<div class="table-responsive">
+    <table class="table table-hover table-striped">
+        <thead>
+            <tr class="success">
+                <th class="col-sm-2">Tên</th>
+                <th class="col-sm-1">Mô tả</th>
+                <th class="col-sm-1">Ảnh</th>
+                <th class="text-center">Ngày cập nhật</th>
+                <th class="col-sm-1">Số lượng</th>
+                @*<th class="col-sm-1">Giá</th>*@
+                <th class="col-sm-1">Loại</th>
+                <th class="col-sm-1">Hãng</th>
+                <th class="col-sm-1">Màu</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.ProductName</td>
+                    <td>
+                        <a href="@Url.Action("DetailProduct","Admin",new { id = item.ProductId})">Chi Tiết</a>
+                    </td>
+                    <td><img src="~/images/products/@item.ImageProduct" width="90"/></td>
+                    <td>@item.UpdateDate</td>
+                    <td>@item.Quantity</td>
+                    @*<td>@item.ProductPrice</td>*@
+                    <td>@item.ProductType.TypeName</td>
+                    <td>@item.Brand.BrandName</td>
+                    <td>
+                        <a href="@Url.Action("DetailColorP","Admin",new { id = item.ProductId})">Chi Tiết</a>
+                    </td>
+                    <td><a href="@Url.Action("EditProduct","Admin", new { id = item.ProductId})"><i class="fas fa-edit"></i></a></td>
+                    <td class="text-center">
+                        <a href="@Url.Action("RemoveProduct",
+                        "Admin",
+                        new { id = item.ProductId})" onclick = "return confirm('Bạn có muốn xóa @item.ProductName không?');">
+                            <i class="fas fa-trash-alt"></i>
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<div class="page-menu">
+    @Html.PagedListPager(Model, page => Url.Action("ProductControl", new { page = page }))
+</div>
+
+<style>
+    .page-menu li {
+        display: inline;
+    }
+
+    ul.pagination {
+        margin-left: 45%;
+    }
+</style>

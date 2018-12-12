@@ -1,0 +1,102 @@
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="DtMobileShop" Class="DtMobileShopDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="WebSettings" ConnectionString="Data Source=CAMCAM\SQLEXPRESS;Initial Catalog=DtMobileShop;Integrated Security=True" SettingsObjectName="System.Configuration.ConfigurationManager.ConnectionStrings" SettingsPropertyName="DtMobileShopConnectionString1" Provider="System.Data.SqlClient" />
+  <Table Name="dbo.Brand" Member="Brands">
+    <Type Name="Brand">
+      <Column Name="BrandId" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="BrandName" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Association Name="Brand_Product" Member="Products" ThisKey="BrandId" OtherKey="BrandId" Type="Product" />
+    </Type>
+  </Table>
+  <Table Name="dbo.FeeShip" Member="FeeShips">
+    <Type Name="FeeShip">
+      <Column Name="PlaceName" Type="System.String" DbType="NVarChar(50) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Fee" Type="System.Decimal" DbType="Decimal(18,0)" CanBeNull="true" />
+      <Association Name="FeeShip_OrderProduct" Member="OrderProducts" ThisKey="PlaceName" OtherKey="PlaceName" Type="OrderProduct" />
+    </Type>
+  </Table>
+  <Table Name="dbo.LineItem" Member="LineItems">
+    <Type Name="LineItem">
+      <Column Name="OrderingId" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="ColorId" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="ProductId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="quantity" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Price" Type="System.Decimal" DbType="Decimal(18,0)" CanBeNull="true" />
+      <Column Name="Total" Type="System.Decimal" DbType="Decimal(18,0)" CanBeNull="true" />
+      <Association Name="OrderProduct_LineItem" Member="OrderProduct" ThisKey="OrderingId" OtherKey="OrderingId" Type="OrderProduct" IsForeignKey="true" />
+      <Association Name="Product_LineItem" Member="Product" ThisKey="ProductId" OtherKey="ProductId" Type="Product" IsForeignKey="true" />
+      <Association Name="ProductColor_LineItem" Member="ProductColor" ThisKey="ColorId" OtherKey="ColorId" Type="ProductColor" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.OrderProduct" Member="OrderProducts">
+    <Type Name="OrderProduct">
+      <Column Name="OrderingId" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="CheckOut" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="OrderDay" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="DeliveryDay" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="PlaceName" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="UserId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Association Name="OrderProduct_LineItem" Member="LineItems" ThisKey="OrderingId" OtherKey="OrderingId" Type="LineItem" />
+      <Association Name="FeeShip_OrderProduct" Member="FeeShip" ThisKey="PlaceName" OtherKey="PlaceName" Type="FeeShip" IsForeignKey="true" />
+      <Association Name="User_OrderProduct" Member="User" ThisKey="UserId" OtherKey="UserId" Type="User" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Product" Member="Products">
+    <Type Name="Product">
+      <Column Name="ProductId" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="ProductName" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Detail" Type="System.String" DbType="NText" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="Sale" Type="System.String" DbType="NText" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="ImageProduct" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="Screen" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
+      <Column Name="CPU" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
+      <Column Name="UpdateDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="Quantity" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="TypeId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="BrandId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Association Name="Product_LineItem" Member="LineItems" ThisKey="ProductId" OtherKey="ProductId" Type="LineItem" />
+      <Association Name="Product_ProductColor" Member="ProductColors" ThisKey="ProductId" OtherKey="ProductId" Type="ProductColor" />
+      <Association Name="Brand_Product" Member="Brand" ThisKey="BrandId" OtherKey="BrandId" Type="Brand" IsForeignKey="true" />
+      <Association Name="ProductType_Product" Member="ProductType" ThisKey="TypeId" OtherKey="TypeId" Type="ProductType" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ProductColor" Member="ProductColors">
+    <Type Name="ProductColor">
+      <Column Name="ColorId" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="ColorName" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Price" Type="System.Decimal" DbType="Decimal(18,0)" CanBeNull="true" />
+      <Column Name="ImageColor" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
+      <Column Name="ProductId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Association Name="ProductColor_LineItem" Member="LineItems" ThisKey="ColorId" OtherKey="ColorId" Type="LineItem" />
+      <Association Name="Product_ProductColor" Member="Product" ThisKey="ProductId" OtherKey="ProductId" Type="Product" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ProductType" Member="ProductTypes">
+    <Type Name="ProductType">
+      <Column Name="TypeId" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="TypeName" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Association Name="ProductType_Product" Member="Products" ThisKey="TypeId" OtherKey="TypeId" Type="Product" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Roles" Member="Roles">
+    <Type Name="Role">
+      <Column Name="RoleId" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="RoleName" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Association Name="Role_User" Member="Users" ThisKey="RoleId" OtherKey="IdRole" Type="User" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Users" Member="Users">
+    <Type Name="User">
+      <Column Name="UserId" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="UserName" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="UserAccount" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="UserPassword" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="UserAddress" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
+      <Column Name="NPhone" Type="System.String" DbType="VarChar(20)" CanBeNull="true" />
+      <Column Name="Email" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="CMND" Type="System.String" DbType="VarChar(20)" CanBeNull="true" />
+      <Column Name="IdRole" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Association Name="User_OrderProduct" Member="OrderProducts" ThisKey="UserId" OtherKey="UserId" Type="OrderProduct" />
+      <Association Name="Role_User" Member="Role" ThisKey="IdRole" OtherKey="RoleId" Type="Role" IsForeignKey="true" />
+    </Type>
+  </Table>
+</Database>

@@ -1,0 +1,196 @@
+﻿@using MobileShop.Models;
+@model List<ItemInCart>
+
+@{
+    ViewBag.Title = "Cart";
+    Layout = "~/Views/Shared/_LayoutMobiePhone.cshtml";
+}
+@section OverridesStyles{
+    <style>
+        section#slider {
+            display: none;
+        }
+        div#left-side{
+            display: none;
+        }
+        div.padding-right{
+            width: 100%;
+        }
+    </style>
+}
+
+<script src="/Scripts/jquery.js"></script>
+<script>
+    $(document).ready(function () {
+        function updateTotalQuantity() {
+            $.ajax({
+                url: '@Url.Action("TotalQuantity", "Cart")',
+                method: "POST",
+                success: function (data) {
+                    $("#total_quantity").html(data);
+                }
+            })
+            return false;
+        }
+
+        function updateTotalPrice() {
+            $.ajax({
+                url: '@Url.Action("TotalPrice", "Cart")',
+                method: "POST",
+                success: function (data) {
+                    $("#all_total_price").html(data);
+                }
+            })
+            return false;
+        }
+
+        $("body").delegate(".cart_quantity_up", "click", function () {
+            var id_p = $(this).attr('id_p');
+            var id_color = $(this).attr('id_color');
+            var qtt_parent = $(this).parent().find('.cart_quantity_input');
+            var qtt_number = qtt_parent.val();
+            qtt_number++; // +1 to add more 1 unit
+            qtt_parent.attr('value', qtt_number);
+            
+            $.ajax({
+                url: '@Url.Action("UpdateQuantity", "Cart")' + '?idP=' + id_p + '&idColor=' + id_color + '&quantity=' + qtt_number,
+                method: "POST",
+                success: function (data) {
+                    $("#total_price_" + id_p + "-" + id_color).html(data);
+                    updateTotalQuantity();
+                    updateTotalPrice();
+                }
+            })
+            return false;
+        })
+
+        $("body").delegate(".cart_quantity_down", "click", function () {
+            var id_p = $(this).attr('id_p');
+            var id_color = $(this).attr('id_color');
+            var qtt_parent = $(this).parent().find('.cart_quantity_input');
+            var qtt_number = qtt_parent.val();
+            qtt_number--;
+            if (qtt_number < 1)
+                qtt_number = 1;
+            qtt_parent.attr('value', qtt_number);
+
+            $.ajax({
+                url: '@Url.Action("UpdateQuantity", "Cart")' + '?idP=' + id_p + '&idColor=' + id_color + '&quantity=' + qtt_number,
+                method: "POST",
+                success: function (data) {
+                    $("#total_price_" + id_p + "-" + id_color).html(data);
+                    updateTotalQuantity();
+                    updateTotalPrice();
+                }
+            })
+            return false;
+        })
+
+        $("body").delegate(".cart_quantity_input", "keyup", function () {
+            var id_p = $(this).attr('id_p');
+            var id_color = $(this).attr('id_color');
+            var qtt_parent = $(this).parent().find('.cart_quantity_input');
+            var qtt_number = qtt_parent.val();
+            if (qtt_number === "")
+                qtt_number = 1;
+            qtt_parent.value = qtt_number;
+
+            $.ajax({
+                url: '@Url.Action("UpdateQuantity", "Cart")' + '?idP=' + id_p + '&idColor=' + id_color + '&quantity=' + qtt_number,
+                method: "POST",
+                success: function (data) {
+                    $("#total_price_" + id_p + "-" + id_color).html(data);
+                    updateTotalQuantity();
+                    updateTotalPrice();
+                }
+            })
+            return false;
+        })
+    })
+
+</script>
+
+<section id="cart_items">
+    <div class="container">
+        <div class="breadcrumbs">
+            <ol class="breadcrumb">
+                <li><a href="#">Home</a></li>
+                <li class="active">Shopping Cart</li>
+            </ol>
+        </div>
+        <div class="table-responsive cart_info">
+            <table class="table table-condensed">
+                <thead>
+                    <tr class="cart_menu">
+                        <td class="image">Sản phẩm</td>
+                        <td class="description"></td>
+                        <td class="price">Giá</td>
+                        <td class="quantity">Số Lượng</td>
+                        <td class="total">Thành Tiền</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="cart_product">
+                                <a href=""><img src="/images/products/@item.image" alt="" width="100"></a>
+                            </td>
+                            <td class="cart_description">
+                                <h4><a href="">@item.name @item.color_name</a></h4>
+                                <p>Web ID: 1089772</p>
+                            </td>
+                            <td class="cart_price">
+                                <p>@String.Format("{0:0,0}", @item.price) VNĐ</p>
+                            </td>
+                            <td class="cart_quantity">
+                                <div class="cart_quantity_button">
+                                    <a class="cart_quantity_up" href="" id_p="@item.id" id_color="@item.idcolor"> + </a>
+                                    <input class="cart_quantity_input" type="number" name="quantity" value="@item.quantity" autocomplete="off" size="2" 
+                                        id_p="@item.id" id_color="@item.idcolor" min="1" 
+                                        onkeydown="javascript: return event.keyCode == 69 || event.keyCode == 189 ? false : true">
+                                    <a class="cart_quantity_down" href="" id_p="@item.id" id_color="@item.idcolor"> - </a>
+                                </div>
+                            </td>
+                            <td class="cart_total">
+                                <p id='total_price_@item.id-@item.idcolor' class="cart_total_price">@String.Format("{0:0,0}", @item.Total()) VNĐ</p>
+                            </td>
+                            <td class="cart_delete">
+                                <a class="cart_quantity_delete" href="@Url.Action("Detail_in_cart","Items", new { id = item.id, idColor = item.idcolor})"><i class="fa fa-info"></i></a>
+                            </td>
+                            <td class="cart_delete">
+                                <a class="cart_quantity_delete" href="@Url.Action("RemoveItem","Cart", new { idP = item.id, idColor = item.idcolor})"><i class="fa fa-times"></i></a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot style="border-top:1px solid #ccc">
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td>Tổng số lượng:</td>
+                        <td id="total_quantity">@ViewBag.TotalQuantity</td>
+                        <td>
+                            <p class="cart_total_price" id="all_total_price">
+                                @String.Format("{0:0,0}", ViewBag.TotalPrice)
+                            </p>
+                        </td>
+                        <td>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" style="text-align: right">
+                            @Html.ActionLink("XÓA GIỎ HÀNG", "DeleteCart", "Cart", new { @class = "btn btn-danger", @style = "margin-top: 10px" })
+                        </td>
+                        <td colspan="3" style="text-align: left">
+                            @Html.ActionLink("ĐẶT HÀNG", "OrderCart", "Cart", new { @class = "btn btn-success", @style = "margin-top: 10px" })
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</section> <!--/#cart_items-->
+
